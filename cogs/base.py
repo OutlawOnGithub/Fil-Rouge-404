@@ -4,7 +4,7 @@ import random
 import time
 
 from utils.embeds import CustomEmbed  # Si tu veux l'utiliser
-from db import Database
+from utils.db import Database
 
 class Base(commands.Cog):
     def __init__(self, bot, db: Database):

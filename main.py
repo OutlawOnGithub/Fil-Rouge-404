@@ -1,40 +1,75 @@
-import discord
-from discord.ext import commands, tasks
 import os
-from datetime import datetime, timezone
-import asyncio
-import logging
+import discord
+from discord.ext import commands
+from database import Database
 
-logging.basicConfig(level=logging.DEBUG)
+# Configuration
+TOKEN = os.getenv('DISCORD_TOKEN')
+PREFIX = os.getenv('BOT_PREFIX', '!')
+SCHEME = os.getenv('SCHEME', 'filrouge')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 
-async def main():
-    TOKEN = os.getenv("DISCORD_TOKEN")
-    PREFIX = os.getenv("BOT_PREFIX")
-    SCHEME = os.getenv("SCHEME")
+# Database connection
+DB_CONFIG = {
+    'host': 'postgres',
+    'port': 5432,
+    'database': 'filrouge',
+    'user': 'filrouge',
+    'password': POSTGRES_PASSWORD,
+    'schema': SCHEME
+}
 
+# Bot setup
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix=PREFIX, intents=intents)
+db = Database(DB_CONFIG)
 
-    bot = commands.Bot(
-        command_prefix=PREFIX,
-        intents=discord.Intents.all(),
-        activity=discord.Activity(type=discord.ActivityType.playing, name=PREFIX+"help"),
-        help_command=None,
-    )   
+@bot.event
+async def on_ready():
+    print(f'{bot.user} est connecté et prêt!')
+    await db.connect()
 
-    @bot.event
-    async def on_ready():
-        print(f"We have logged in as {bot.user}")
+@bot.command(name='quoi')
+async def quoi(ctx):
+    """Répond 'feur' à la commande !quoi"""
+    await ctx.send('feur')
 
-    # Automatically load all cogs from the cogs folder
-    for file in os.listdir("./cogs"):
-        if file.endswith(".py"):
-            try:
-                await bot.load_extension(f"cogs.{file[:-3]}")
-                print(f"Loaded cog: {file}")
-            except Exception as e:
-                print(f"Failed to load cog {file}: {e}")
+@bot.command(name='beurre')
+async def beurre(ctx):
+    """Tire entre 2 et 20 beurres et l'ajoute à la balance du joueur"""
+    user_id = ctx.author.id
+    amount = await db.add_beurre(user_id)
+    balance = await db.get_balance(user_id)
+    
+    await ctx.send(f'{ctx.author.mention} a gagné **{amount} beurre(s)** ! 🧈\nBalance totale : **{balance} beurre(s)**')
 
-    await bot.start(TOKEN)
+@bot.command(name='pull')
+async def pull(ctx):
+    """Utilise la balance pour tirer un objet au sort"""
+    user_id = ctx.author.id
+    result = await db.pull_object(user_id)
+    
+    if result['error']:
+        await ctx.send(f"{ctx.author.mention} {result['message']}")
+    else:
+        emoji_map = {
+            'bout de bois': '🪵',
+            'crotte': '💩',
+            'lingot': '🏆'
+        }
+        emoji = emoji_map.get(result['object'], '❓')
+        
+        await ctx.send(
+            f"{ctx.author.mention} a dépensé **{result['cost']} beurre(s)** et a obtenu : **{result['object']}** {emoji}\n"
+            f"Balance restante : **{result['new_balance']} beurre(s)**"
+        )
 
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        return
+    print(f'Erreur : {error}')
+
+if __name__ == '__main__':
+    bot.run(TOKEN)

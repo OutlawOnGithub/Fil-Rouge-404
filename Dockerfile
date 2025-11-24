@@ -1,12 +1,10 @@
-FROM ubuntu:jammy
-
-RUN apt-get -y update && apt-get -y upgrade
-RUN apt-get -y install python3 python3-pip
+FROM python:3.11-slim
 
 WORKDIR /app
-COPY --chown=1001 . .
 
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-USER 1001
-CMD ["python3", "main.py"]
+COPY main.py database.py ./
+
+CMD ["python", "main.py"]

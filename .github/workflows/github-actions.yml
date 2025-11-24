@@ -50,7 +50,7 @@ jobs:
         id: stop-burk
       - name: "Deploy filbleu"
         if: (github.ref == 'refs/heads/dev') && (success() || steps.stop-burk.conclusion == 'failure')
-        run: docker run --name filbleu -d -e DISCORD_TOKEN=${{ secrets.FILBLEU_TOKEN }} -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_FILBLEU_PASSWORD }} -e BOT_PREFIX="!" -e SCHEME="filbleu" --restart unless-stopped --network filrouge outlaw/filbleu:latest
+        run: docker run --name filbleu -d -e DISCORD_TOKEN=${{ secrets.FILBLEU_TOKEN }} -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_FILBLEU_PASSWORD }} -e BOT_PREFIX="_" -e SCHEME="filbleu" --restart unless-stopped --network filrouge outlaw/filbleu:latest
       - name: "Stop filrouge bot"
         if: github.ref == 'refs/heads/main'
         continue-on-error: true
@@ -58,5 +58,5 @@ jobs:
         id: stop-berg
       - name: "Deploy filrouge"
         if: (github.ref == 'refs/heads/main') && (success() || steps.stop-berg.conclusion == 'failure')
-        run: docker run --name filrouge -d -e DISCORD_TOKEN=${{ secrets.FILROUGE_TOKEN }} -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_FILROUGE_PASSWORD }} -e BOT_PREFIX="_" -e SCHEME="filrouge" --restart unless-stopped --network filrouge outlaw/filrouge:latest
+        run: docker run --name filrouge -d -e DISCORD_TOKEN=${{ secrets.FILROUGE_TOKEN }} -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_FILROUGE_PASSWORD }} -e BOT_PREFIX="!" -e SCHEME="filrouge" --restart unless-stopped --network filrouge outlaw/filrouge:latest
 

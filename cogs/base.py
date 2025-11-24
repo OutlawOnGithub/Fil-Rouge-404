@@ -13,7 +13,7 @@ class Base(commands.Cog):
 
     @commands.command(name="embed")
     async def roll(self, ctx, *args):
-        await ctx.send(CustomEmbed("titreuh",discord.Color.blue,"null"))
+        await ctx.CustomEmbed("titreuh",discord.Color.blue,"null").send()
 
 # Fonction setup pour Discord.py v2
 async def setup(bot):

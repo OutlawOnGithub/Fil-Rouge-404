@@ -1,0 +1,11 @@
+name: Retrieve filrouge logs
+on:
+  push:
+    branches:
+      - logs
+jobs:
+  retrieve-log:
+    runs-on: self-hosted
+    steps:
+      - run: echo "Retrieving logs from filrouge containers"
+      - run: docker logs -t --since 1h filrouge

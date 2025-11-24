@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: filrouge
+      POSTGRES_DB: filrouge
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    ports:
+      - 5432:5432
+    volumes:
+      - /home/outlaw/discord/filrouge/db/data:/var/lib/postgresql/data
+    networks:
+      - filrouge
+  
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: unless-stopped
+    ports:
+      - 10090:8080
+    networks:
+      - filrouge
+
+networks:
+  filrouge:
+    name: filrouge

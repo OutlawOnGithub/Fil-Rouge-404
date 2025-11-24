@@ -1,0 +1,62 @@
+name: filrouge pipeline on tags
+on:
+  push:
+    branches:
+      - dev
+      - main
+jobs:
+  Build-Image:
+    runs-on: self-hosted
+    if: 
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Building dev image"
+        if: github.ref == 'refs/heads/dev'
+        run: docker build --no-cache -t outlaw/filbleu:latest .
+      - name: "Building prod image"
+        if: github.ref == 'refs/heads/main'
+        run: docker build --no-cache -t outlaw/filrouge:latest .
+  
+  Copy-dependencies:
+    runs-on: self-hosted
+    needs: Build-Image
+    steps:
+      - uses: actions/checkout@v4
+      - run: mkdir -p /home/outlaw/filrouge/db/data
+      - run: mkdir -p /home/outlaw/filrouge/db/flyway
+      - run: cp -r flyway /home/outlaw/filrouge/db/flyway
+
+  Deploy-DB:
+    runs-on: self-hosted
+    needs: Copy-dependencies
+    steps:
+      - uses: actions/checkout@v4
+      - run: COMPOSE_STACK_NAME=FILROUGE_DB POSTGRES_PASSWORD=${{ secrets.POSTGRES_FILROUGE_PASSWORD }} docker compose up -d
+      - run: docker run --rm --network filrouge -v /home/outlaw/filrouge/db/flyway:/flyway/sql flyway/flyway -baselineOnMigrate=true -url=jdbc:postgresql://postgres:5432/filrouge -user=filrouge -password=${{ secrets.FILROUGE_POSTGRES_PASSWORD }} migrate > flyway-migration.log
+      - name: Upload logs as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flyway-logs
+          path: flyway-migration.log
+  Deploy-Bot:
+    runs-on: self-hosted
+    needs: Build-Image
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Stop filbleu bot"
+        if: github.ref == 'refs/heads/dev'
+        continue-on-error: true
+        run: docker stop filbleu && docker rm filbleu
+        id: stop-burk
+      - name: "Deploy filbleu"
+        if: (github.ref == 'refs/heads/dev') && (success() || steps.stop-burk.conclusion == 'failure')
+        run: docker run --name filbleu -d -e DISCORD_TOKEN=${{ secrets.FILBLEU_TOKEN }} -e POSTGRES_PASSWORD=${{ secrets.FILBLEU_POSTGRES_PASSWORD }} -e BOT_PREFIX="!" -e SCHEME="filbleu" --restart unless-stopped --network filrouge outlaw/filbleu:latest
+      - name: "Stop filrouge bot"
+        if: github.ref == 'refs/heads/main'
+        continue-on-error: true
+        run: docker stop filrouge && docker rm filrouge
+        id: stop-berg
+      - name: "Deploy filrouge"
+        if: (github.ref == 'refs/heads/main') && (success() || steps.stop-berg.conclusion == 'failure')
+        run: docker run --name filrouge -d -e DISCORD_TOKEN=${{ secrets.FILROUGE_TOKEN }} -e POSTGRES_PASSWORD=${{ secrets.FILROUGE_POSTGRES_PASSWORD }} -e BOT_PREFIX="_" -e SCHEME="filrouge" --restart unless-stopped --network filrouge outlaw/filrouge:latest
+

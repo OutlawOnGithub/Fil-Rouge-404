@@ -1,12 +1,12 @@
 services:
   postgres:
     image: postgres:16
-    container_name: postgres
+    container_name: postgres_fl
     restart: unless-stopped
     environment:
       POSTGRES_USER: filrouge
       POSTGRES_DB: filrouge
-      POSTGRES_PASSWORD: $FILROUGE_POSTGRES_PASSWORD
+      POSTGRES_PASSWORD: $POSTGRES_FILROUGE_PASSWORD
     ports:
       - 6432:5432
     volumes:

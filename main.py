@@ -1,29 +1,25 @@
+# main.py
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
+import json
 import os
-from datetime import datetime, timezone
-import asyncio
-
-
-
 
 async def main():
+    # Load token from environment or config
+
     TOKEN = os.getenv("DISCORD_TOKEN")
-    DB_PW = os.getenv("POSTGRES_PASSWORD")
-    PREFIX = os.getenv("BOT_PREFIX")
-    SCHEME = os.getenv("SCHEME")
 
-
+    intents = discord.Intents.all()
     bot = commands.Bot(
-        command_prefix=PREFIX,
-        intents=discord.Intents.all(),
-        activity=discord.Activity(type=discord.ActivityType.playing, name=PREFIX+"help"),
-        help_command=None,
-    )   
+        command_prefix="!",
+        intents=intents,
+        activity=discord.Activity(type=discord.ActivityType.playing, name="!help"),
+        help_command=None
+    )
 
     @bot.event
     async def on_ready():
-        print(f"We have logged in as {bot.user}")
+        print(f'Logged in as {bot.user}')
 
     # Automatically load all cogs from the cogs folder
     for file in os.listdir("./cogs"):
@@ -39,4 +35,5 @@ async def main():
 if __name__ == "__main__":
     import asyncio
     asyncio.run(main())
+    
     

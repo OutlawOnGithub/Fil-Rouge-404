@@ -2,6 +2,9 @@ import os
 import discord
 from discord.ext import commands
 from database import Database
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 # Configuration
 TOKEN = os.getenv('DISCORD_TOKEN')

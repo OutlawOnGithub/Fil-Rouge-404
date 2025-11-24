@@ -6,17 +6,17 @@ services:
     environment:
       POSTGRES_USER: filrouge
       POSTGRES_DB: filrouge
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_PASSWORD: $FILROUGE_POSTGRES_PASSWORD
     ports:
-      - 5432:5432
+      - 6432:5432
     volumes:
       - /home/outlaw/discord/filrouge/db/data:/var/lib/postgresql/data
     networks:
       - filrouge
   
   adminer:
-    image: adminer
-    container_name: adminer
+    image: adminer_fl
+    container_name: adminer_fl
     restart: unless-stopped
     ports:
       - 10090:8080

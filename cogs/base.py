@@ -64,7 +64,7 @@ class Base(commands.Cog):
 # --------------------------
 async def setup(bot):
     # Création DB
-    db = Database(dsn="postgresql://user:password@localhost:5432/filrouge")
+    db = Database(dsn="postgresql://user:password@localhost:5432/postgres")
     await db.connect()
 
     await bot.add_cog(Base(bot, db))

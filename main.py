@@ -6,7 +6,6 @@ import asyncio
 
 async def main():
     TOKEN = os.getenv("DISCORD_TOKEN")
-    DB_PW = os.getenv("POSTGRES_PASSWORD")
     PREFIX = os.getenv("BOT_PREFIX")
     SCHEME = os.getenv("SCHEME")
 

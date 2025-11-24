@@ -7,13 +7,18 @@ class Base(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="quoi")
-    async def roll(self, ctx, *args):
-        await ctx.send(f"feur")
+    # @commands.command(name="quoi")
+    # async def roll(self, ctx, *args):
+    #     await ctx.send(f"feur")
 
     @commands.command(name="pull")
     async def roll(self, ctx, *args):
         await ctx.send(f"Tu as gagné {random.randint(0, 10)} beurres !")
+
+    @commands.command(name="quoi")
+    async def roll(self, ctx, *args):
+        await ctx.send(f"feur")
+        
 
 # Fonction setup pour Discord.py v2
 async def setup(bot):

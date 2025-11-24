@@ -9,3 +9,7 @@ class Base(commands.Cog):
     @commands.command(name="quoi")
     async def roll(self, ctx, *args):
         await ctx.send(f"feur")
+
+# Fonction setup pour Discord.py v2
+async def setup(bot):
+    await bot.add_cog(Base(bot))

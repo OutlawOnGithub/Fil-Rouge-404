@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 import asyncio
 import logging
 
+logging.basicConfig(level=logging.DEBUG)
+
 async def main():
     TOKEN = os.getenv("DISCORD_TOKEN")
     PREFIX = os.getenv("BOT_PREFIX")
@@ -35,4 +37,4 @@ async def main():
 
 if __name__ == "__main__":
     import asyncio
-    asyncio.run(main(log_level=logging.DEBUG))
+    asyncio.run(main())

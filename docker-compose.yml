@@ -15,7 +15,7 @@ services:
       - filrouge
   
   adminer:
-    image: adminer_fl
+    image: adminer
     container_name: adminer_fl
     restart: unless-stopped
     ports:

@@ -11,9 +11,9 @@ class Base(commands.Cog):
     async def roll(self, ctx, *args):
         await ctx.send(f"feur")
 
-    @commands.command(name="embed")
+    @commands.command(name="pull")
     async def roll(self, ctx, *args):
-        await ctx.CustomEmbed("titreuh",discord.Color.blue,"null").send()
+        await ctx.send(f"Tu as gagné {random.randint(0, 10)} beurres !")
 
 # Fonction setup pour Discord.py v2
 async def setup(bot):

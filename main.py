@@ -3,6 +3,7 @@ from discord.ext import commands, tasks
 import os
 from datetime import datetime, timezone
 import asyncio
+import logging
 
 async def main():
     TOKEN = os.getenv("DISCORD_TOKEN")

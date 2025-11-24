@@ -18,6 +18,10 @@ class Base(commands.Cog):
     @commands.command(name="quoi")
     async def roll(self, ctx, *args):
         await ctx.send(f"feur")
+
+    @commands.command(name="truc")
+    async def roll(self, ctx, *args):
+        await ctx.send(f"fesse")
         
 
 # Fonction setup pour Discord.py v2

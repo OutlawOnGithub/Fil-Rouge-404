@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: COMPOSE_STACK_NAME=FILROUGE_DB POSTGRES_PASSWORD=${{ secrets.POSTGRES_FILROUGE_PASSWORD }} docker compose up -d
-      - run: docker run --rm --network filrouge -v /home/outlaw/filrouge/db/flyway:/flyway/sql flyway/flyway -baselineOnMigrate=true -url=jdbc:postgresql://postgres:6432/filrouge -user=filrouge -password=${{ secrets.POSTGRES_FILROUGE_PASSWORD }} migrate > flyway-migration.log
+      - run: docker run --rm --network filrouge -v /home/outlaw/filrouge/db/flyway:/flyway/sql flyway/flyway -baselineOnMigrate=true -url=jdbc:postgresql://postgres:5432/filrouge -user=filrouge -password=${{ secrets.POSTGRES_FILROUGE_PASSWORD }} migrate > flyway-migration.log
       - name: Upload logs as an artifact
         uses: actions/upload-artifact@v4
         with:
